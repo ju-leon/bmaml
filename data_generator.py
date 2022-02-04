@@ -23,7 +23,6 @@ class SinusoidGenerator(object):
         # train set
         self.amp_range_train = [0.1, 5.0]
         self.phs_range_train = [0, np.pi*FLAGS.phase]
-        self.frq_range_train = [0.5, 1.0*FLAGS.freq]
         self.inp_range_train = [-5.0, 5.0]
 
         # data size
@@ -52,13 +51,12 @@ class SinusoidGenerator(object):
         # get range
         amp_range = self.amp_range_train
         phs_range = self.phs_range_train
-        frq_range = self.frq_range_train
         inp_range = self.inp_range_train
 
         # sample tasks
         amp_list = np.random.uniform(low=amp_range[0], high=amp_range[1], size=[total_num_tasks])
         phs_list = np.random.uniform(low=phs_range[0], high=phs_range[1], size=[total_num_tasks])
-        frq_list = np.random.uniform(low=frq_range[0], high=frq_range[1], size=[total_num_tasks])
+        frq_list = np.ones(shape=[total_num_tasks])
         x_list = np.random.uniform(low=inp_range[0], high=inp_range[1], size=[total_num_tasks, self.total_samples, 1])
         y_list = np.zeros(shape=[total_num_tasks, self.total_samples, 1])
         z_list = np.zeros(shape=[total_num_tasks, self.total_samples, 1])
@@ -157,13 +155,12 @@ class SinusoidGenerator(object):
             # get range
             amp_range = self.amp_range_train
             phs_range = self.phs_range_train
-            frq_range = self.frq_range_train
             inp_range = self.inp_range_train
 
             # sample tasks
             amp_list = np.random.uniform(low=amp_range[0], high=amp_range[1], size=[self.num_tasks])
             phs_list = np.random.uniform(low=phs_range[0], high=phs_range[1], size=[self.num_tasks])
-            frq_list = np.random.uniform(low=frq_range[0], high=frq_range[1], size=[self.num_tasks])
+            frq_list = np.ones(shape=[self.num_tasks])
             x_list = np.random.uniform(low=inp_range[0], high=inp_range[1], size=[self.num_tasks, self.total_samples, 1])
             y_list = np.zeros(shape=[self.num_tasks, self.total_samples, 1])
             z_list = np.zeros(shape=[self.num_tasks, self.total_samples, 1])
@@ -233,3 +230,4 @@ class SinusoidGenerator(object):
                     valid_x,
                     train_y + train_z,
                     valid_y + valid_z if is_training else valid_y]
+

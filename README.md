@@ -7,6 +7,15 @@ With the setting, num_particle=1, you can run MAML on emaml_main.py.
 
 For the reinforcement learning experiments, plese see [this repository](https://github.com/jaesik817/bmaml_rl).
 
+## Version setup
+
+```
+conda create --name bmaml python=3.6
+conda activate bmaml
+conda install tensorflow==1.14 numpy==1.15.4 matplotlib==3.0.3
+pip install -r requirements.txt
+```
+
 ## Quick run
 The instructions for the experiments described in the paper are at the top of each main script as followed.
 

@@ -40,7 +40,7 @@ flags.DEFINE_integer('test_total_num_tasks', 100, 'total number of tasks for eva
 flags.DEFINE_float('noise_factor', 0.01, 'noise_factor')
 flags.DEFINE_float('phase', 2.0, 'phase')
 flags.DEFINE_float('freq', 2.0, 'freq')
-flags.DEFINE_string('dataset', 'Sinusoid1D', 'Select between Sinusoid1D or SinusoidAffine1D')
+flags.DEFINE_string('dataset', 'Sinusoid1D', 'Select between Sinusoid1D or LineSine')
 
 # model options
 flags.DEFINE_integer('seed', 10, 'random seed')
@@ -466,7 +466,7 @@ def main():
     # get data generator
     if FLAGS.dataset == 'Sinusoid1D':
         dataset = SinusoidGenerator()
-    elif  FLAGS.dataset == 'SinusoidAffine1D':
+    elif  FLAGS.dataset == 'LineSine':
         dataset = LineSineGenerator()
     else:
         raise RuntimeError(f"Dataset {FLAGS.dataset} not found")

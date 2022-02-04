@@ -25,10 +25,12 @@ from collections import OrderedDict
 from tensorflow.python.platform import flags
 import utils
 from bmaml import BMAML
-from data_generator import SinusoidGenerator
+from data_generator import SinusoidGenerator, LineSineGenerator
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import pickle
+
 FLAGS = flags.FLAGS
 
 # dataset
@@ -38,6 +40,7 @@ flags.DEFINE_integer('test_total_num_tasks', 100, 'total number of tasks for eva
 flags.DEFINE_float('noise_factor', 0.01, 'noise_factor')
 flags.DEFINE_float('phase', 2.0, 'phase')
 flags.DEFINE_float('freq', 2.0, 'freq')
+flags.DEFINE_string('dataset', 'Sinusoid1D', 'Select between Sinusoid1D or SinusoidAffine1D')
 
 # model options
 flags.DEFINE_integer('seed', 10, 'random seed')
@@ -371,8 +374,19 @@ def train(model, dataset, saver, sess, config_str):
                 if best_test_loss > test_valid_loss_list[-1]:
                     best_test_loss = test_valid_loss_list[-1]
                     best_test_iter = itr
-                    if itr > 10000:
-                        saver.save(sess, experiment_dir + '/' + 'best_model')
+
+                dictinary = {}
+                for particle in range(10):
+                    dictinary[particle] = {}
+                    for layer in range(1,5):
+                        dictinary[particle][layer] = {}
+                        weights = model.W_network_particles[particle][f"w{layer}"].eval(session=sess)
+                        bias = model.W_network_particles[particle][f"b{layer}"].eval(session=sess)
+                        dictinary[particle][layer]['weights'] = weights
+                        dictinary[particle][layer]['bias'] = bias
+
+                with open(f"model_weights.pickle", "wb") as output_file:
+                    pickle.dump(dictinary, output_file)
 
 
 def test(model, dataset, sess, inner_lr):
@@ -400,7 +414,6 @@ def test(model, dataset, sess, inner_lr):
     eval_valid_loss_list = np.array(eval_valid_loss_list)
     eval_valid_loss_mean = np.mean(eval_valid_loss_list, axis=0)
     return eval_valid_loss_mean
-
 
 def main():
     # set random seeds
@@ -443,14 +456,20 @@ def main():
                    ('a_g', 'AG'),
                    ('b_g', 'BG'),
                    ('a_l', 'AL'),
-                   ('b_l', 'BL') ]
+                   ('b_l', 'BL'),
+                   ('dataset', 'DS') ]
 
     config_str = utils.experiment_string2(FLAGS.flag_values_dict(), fname_args, separator='_')
     config_str = str(time.mktime(datetime.now().timetuple()))[:-2] + '_BMAML_CHASE' + config_str
     print(config_str)
 
     # get data generator
-    dataset = SinusoidGenerator()
+    if FLAGS.dataset == 'Sinusoid1D':
+        dataset = SinusoidGenerator()
+    elif  FLAGS.dataset == 'SinusoidAffine1D':
+        dataset = LineSineGenerator()
+    else:
+        raise RuntimeError(f"Dataset {FLAGS.dataset} not found")
 
     # get dataset size
     dim_output = dataset.dim_output

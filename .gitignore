@@ -102,3 +102,9 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# Logging data
+log/
+
+# Model weight transfer
+model_weights.pickle

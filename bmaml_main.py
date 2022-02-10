@@ -378,7 +378,7 @@ def train(model, dataset, saver, sess, config_str):
                 dictinary = {}
                 for particle in range(FLAGS.num_particles):
                     dictinary[particle] = {}
-                    for layer in range(1,FLAGS.num_layers + 1):
+                    for layer in range(1,FLAGS.num_layers + 2):
                         dictinary[particle][layer] = {}
                         weights = model.W_network_particles[particle][f"w{layer}"].eval(session=sess)
                         bias = model.W_network_particles[particle][f"b{layer}"].eval(session=sess)
